@@ -22,6 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- AndroidManifest.xml에 추가 !-->
+        <activity android:name=".AlertActivity"/>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
