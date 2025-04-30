@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void testRaspberryConnection() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("211.33.127.150:18650")  // 여기에 라즈베리파이 IP 넣기
+                .baseUrl("아이피주소")  // 여기에 라즈베리파이 IP 넣기
                 .addConverterFactory(GsonConverterFactory.create())
 
                 .build();
