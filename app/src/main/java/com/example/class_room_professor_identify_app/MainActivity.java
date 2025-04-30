@@ -6,15 +6,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.class_room_professor_identify_app.databinding.ActivityMainBinding;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AlertActivity.class);
             startActivity(intent);
         });
+        Button btnTest = findViewById(R.id.testConnectionButton);
+
+        btnTest.setOnClickListener(v -> {
+            testRaspberryConnection();
+        });
     }
 
     private void setupStarToggle(View profView, int starButtonId) {
@@ -86,5 +99,38 @@ public class MainActivity extends AppCompatActivity {
 
         professorViews = sorted; // 현재 순서 업데이트
     }
+    private void testRaspberryConnection() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("211.33.127.150:18650")  // 여기에 라즈베리파이 IP 넣기
+                .addConverterFactory(GsonConverterFactory.create())
+
+                .build();
+
+        RaspberryApi api = retrofit.create(RaspberryApi.class);
+
+        Call<JsonObject> call = api.getHello(); // RaspberryApi 인터페이스에서 정의한 메서드
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject body = response.body();
+                    if (body.has("message")) {
+                        String msg = body.get("message").getAsString();
+                        Toast.makeText(MainActivity.this, "서버 응답: " + msg, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "메시지 필드 없음", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "응답 실패!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "연결 실패: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
 }
