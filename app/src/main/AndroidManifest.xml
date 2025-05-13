@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Class_room_professor_identify_app"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="33">
         <receiver android:name=".AlarmReceiver" android:exported="false" />
 
