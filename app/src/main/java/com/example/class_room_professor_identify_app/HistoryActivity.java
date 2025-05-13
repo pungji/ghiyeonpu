@@ -71,7 +71,7 @@ public class HistoryActivity extends AppCompatActivity {
                             StringBuilder result = new StringBuilder();
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject person = response.getJSONObject(i);
-                                int id = person.getInt("id");
+                                //int id = person.getInt("id");// 이건 아직 안씀
                                 String personName = person.getString("name");
                                 result.append(personName).append("\n");
                             }
