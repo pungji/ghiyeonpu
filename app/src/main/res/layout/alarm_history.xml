@@ -17,6 +17,17 @@
         android:textColor="#212121"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="16dp"/>
+    <!-- 🔹 추가하고 싶은 텍스트뷰 -->
+    <TextView
+        android:id="@+id/alertHeaderText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🔔 최근 알림 목록"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="12dp" />
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
@@ -26,6 +37,7 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingBottom="16dp"/>
+
 
     <!-- 뒤로 가기 버튼 -->
     <Button

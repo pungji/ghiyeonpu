@@ -1,6 +1,8 @@
 package com.example.class_room_professor_identify_app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,17 +11,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import Notification.NotificationHelper;
+import Notification.NotificationItem;
+import Notification.NotificationRepository;
+import Notification.ResultAdapter;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -29,11 +44,29 @@ public class HistoryActivity extends AppCompatActivity {
     private TextView resultTextView;
     private RequestQueue requestQueue;
     private String serverUrl = "http://211.33.127.150/get_person_info.php";
+    // 전역 변수 선언
+    private ResultAdapter adapter;
+    private RecyclerView alertRecyclerView;
+
+    NotificationRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_history);
+
+
+
+
+
+
+        // onCreate()에서 반드시 초기화
+        alertRecyclerView = findViewById(R.id.alertRecyclerView);
+        adapter = new ResultAdapter(new ArrayList<>());
+        alertRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        alertRecyclerView.setAdapter(adapter);
+
+
 
         // 홈 버튼 눌렀을 때 메인화면으로 이동
         Button btnHome = findViewById(R.id.homeButton);
@@ -63,32 +96,37 @@ public class HistoryActivity extends AppCompatActivity {
     private void sendNameToServer(String name) {
         String url = serverUrl + "?name=" + name;
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Log.d("Volley Response", response.toString());
                     try {
-                        if (response.length() > 0) {
-                            StringBuilder result = new StringBuilder();
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject person = response.getJSONObject(i);
-                                //int id = person.getInt("id");// 이건 아직 안씀
-                                String personName = person.getString("name");
-                                result.append(personName).append("\n");
-                            }
-                            resultTextView.setText(result.toString());
+                        // 응답을 JSONObject로 파싱
+                        JSONObject obj = new JSONObject(response);
+
+                        // "prohe" 키가 있는 경우 해당 값을 가져옴
+                        if (obj.has("prowhe")) {
+                            int prowheValue = obj.getInt("prowhe");  // 또는 getString()도 가능
+                            adapter.addMessage("웹에서 받은 값은 " + prowheValue + "입니다");
+
                         } else {
-                            resultTextView.setText("해당하는 이름을 찾을 수 없음.");
+                            resultTextView.setText("prohe 값이 존재하지 않습니다.");
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        resultTextView.setText("JSON 파싱 오류");
+                        resultTextView.setText("JSON 파싱 오류: " + e.getMessage());
                     }
                 },
                 error -> {
-                    Log.e("Volley Error", error.toString());
-                    resultTextView.setText("서버 요청 실패앙기모띠: " + error.getMessage());
+                    String msg = "서버 요청 실패: ";
+                    if (error.getMessage() != null) {
+                        msg += error.getMessage();
+                    } else {
+                        msg += "알 수 없는 오류";
+                    }
+                    resultTextView.setText(msg);
                 });
 
-        requestQueue.add(jsonArrayRequest);
+        requestQueue.add(stringRequest);
     }
+
 }
