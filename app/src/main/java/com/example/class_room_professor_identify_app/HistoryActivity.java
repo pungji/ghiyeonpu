@@ -43,7 +43,7 @@ public class HistoryActivity extends AppCompatActivity {
     private Button searchButton;
     private TextView resultTextView;
     private RequestQueue requestQueue;
-    private String serverUrl = "http://211.33.127.150/get_person_info.php";
+    private String serverUrl = "아이피주소 지워±";
     // 전역 변수 선언
     private ResultAdapter adapter;
     private RecyclerView alertRecyclerView;
